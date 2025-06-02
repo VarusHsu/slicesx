@@ -9,19 +9,19 @@ package slicesx
 //	var array = []int{
 //		1, 2, 3, 4, 5, 6, 7, 8, 9, 10
 //	}
-//	split := Chunk(array, 3)
-//	// split [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10]]
+//	chunks := Chunk(array, 3)
+//	// chunks: [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10]]
 //
-//	split = Chunk(array, 1, 2, 3) // reuse last step
-//	// split [[1], [2, 3], [4, 5, 6], [7, 8, 9], [10]]
+//	chunks = Chunk(array, 1, 2, 3) // reuse last step
+//	// chunks: [[1], [2, 3], [4, 5, 6], [7, 8, 9], [10]]
 //
-//	split = Chunk(array, 1, 0, 3)
-//	// split [[1], [], [2, 3, 4], [5, 6, 7], [8, 9, 10]]
+//	chunks = Chunk(array, 1, 0, 3)
+//	// chunks: [[1], [], [2, 3, 4], [5, 6, 7], [8, 9, 10]]
 //
-//	split = Chunk(array, 1, -1, 3)
+//	chunks = Chunk(array, 1, -1, 3)
 //	// panic("step should not be a negative")
 //
-//	split = Chunk(array, 1, 3, 0)
+//	chunks = Chunk(array, 1, 3, 0)
 //	// panic("last step must be a positive")
 func Chunk[S ~[]E, E any, N number](array S, step ...N) []S {
 
