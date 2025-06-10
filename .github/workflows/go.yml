@@ -34,7 +34,7 @@ jobs:
       uses: codecov/codecov-action@v5
       with:
         token: 910d5086-b1d9-4e08-b77b-320ade59dbbb
-        slug: VarusHsu/excelorm
+        slug: VarusHsu/slicesx
 
   lint:
     runs-on: ubuntu-latest
