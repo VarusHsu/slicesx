@@ -124,6 +124,24 @@ func TestChunkPanicCases(t *testing.T) {
 	})
 }
 
+func TestChunkZeroLen(t *testing.T) {
+	t.Run("ZeroLen1", func(t *testing.T) {
+		var array []int
+		excepted := make([][]int, 0)
+		if !reflect.DeepEqual(Chunk(array, 1), excepted) {
+			t.Errorf("ZeroLen1 failed")
+		}
+	})
+
+	t.Run("ZeroLen2", func(t *testing.T) {
+		var array = make([]int, 0)
+		excepted := make([][]int, 0)
+		if !reflect.DeepEqual(Chunk(array, 1), excepted) {
+			t.Errorf("ZeroLen2 failed")
+		}
+	})
+}
+
 // genArray generates a slice of ints from start (inclusive) to end (exclusive).
 func genArray(start, end int) []int {
 	array := make([]int, 0, end-start)

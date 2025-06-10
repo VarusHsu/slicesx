@@ -42,8 +42,8 @@ func Chunk[S ~[]E, E any, N number](array S, step ...N) []S {
 		return int(step[stepIndex])
 	}
 
-	if len(array) == 0 { // ??? return nil / [nil] / [[]] / [array]
-		return []S{array}
+	if len(array) == 0 {
+		return []S{}
 	}
 
 	start, end := 0, 0
