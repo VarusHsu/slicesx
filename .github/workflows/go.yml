@@ -52,4 +52,5 @@ jobs:
         with:
           version: v1.61.0
           args: --verbose
+          skip-go-installation: true
 
