@@ -44,6 +44,10 @@ package slicesx
 //	// panic("last step must be a positive")
 func Chunk[S ~[]E, E any, N number](array S, step ...N) []S {
 
+	if len(step) == 0 { // actually unreachable
+		panic("at least one step must be provided")
+	}
+
 	if step[len(step)-1] <= 0 {
 		panic("last step must be a positive")
 	}
@@ -65,14 +69,33 @@ func Chunk[S ~[]E, E any, N number](array S, step ...N) []S {
 		return []S{}
 	}
 
+	capacity := 0
+	remainingLen := len(array)
+
+	for i := range step {
+		if step[i] < 0 {
+			panic("step should not be a negative")
+		}
+
+		if remainingLen <= 0 {
+			break
+		}
+
+		remainingLen -= int(step[i])
+		capacity++
+	}
+
+	if remainingLen > 0 {
+		capacity += remainingLen / int(step[len(step)-1])
+	}
+
+	if remainingLen > 0 && remainingLen%int(step[len(step)-1]) > 0 {
+		capacity++
+	}
+
 	start, end := 0, 0
 	var ns int
-	for ns == 0 {
-		ns = nextStep()
-	}
-	// Preallocate capacity based on first step
-	chunks := make([]S, 0, len(array)/ns+1)
-	stepIndex = 0 // reset to re-use steps from the beginning
+	chunks := make([]S, 0, capacity)
 
 	for {
 		ns = nextStep()

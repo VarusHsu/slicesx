@@ -161,6 +161,68 @@ func TestChunkZeroLen(t *testing.T) {
 	})
 }
 
+func TestChunkCapacityAndLength(t *testing.T) {
+	array := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+
+	tests := []struct {
+		name       string
+		steps      []int
+		wantChunks [][]int
+		wantCapGE  bool
+	}{
+		{
+			name:       "Single step 3",
+			steps:      []int{3},
+			wantChunks: [][]int{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}, {10}},
+			wantCapGE:  true,
+		},
+		{
+			name:       "Multiple steps 1,2,3",
+			steps:      []int{1, 2, 3},
+			wantChunks: [][]int{{1}, {2, 3}, {4, 5, 6}, {7, 8, 9}, {10}},
+			wantCapGE:  true,
+		},
+		{
+			name:       "Step with zero",
+			steps:      []int{1, 0, 3},
+			wantChunks: [][]int{{1}, {}, {2, 3, 4}, {5, 6, 7}, {8, 9, 10}},
+			wantCapGE:  true,
+		},
+		{
+			name:       "Single element steps",
+			steps:      []int{1},
+			wantChunks: [][]int{{1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}},
+			wantCapGE:  true,
+		},
+		{
+			name:       "Step larger than array",
+			steps:      []int{20},
+			wantChunks: [][]int{{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}},
+			wantCapGE:  true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := Chunk(array, tt.steps...)
+
+			if len(got) != len(tt.wantChunks) {
+				t.Errorf("Chunk() got length %d, want %d", len(got), len(tt.wantChunks))
+			}
+
+			for i := range got {
+				if !reflect.DeepEqual(got[i], tt.wantChunks[i]) {
+					t.Errorf("Chunk() chunk[%d] = %v, want %v", i, got[i], tt.wantChunks[i])
+				}
+			}
+
+			if tt.wantCapGE && cap(got) != len(got) {
+				t.Errorf("Chunk() result capacity %d < length %d", cap(got), len(got))
+			}
+		})
+	}
+}
+
 // genArray generates a slice of ints from start (inclusive) to end (exclusive).
 func genArray(start, end int) []int {
 	array := make([]int, 0, end-start)
