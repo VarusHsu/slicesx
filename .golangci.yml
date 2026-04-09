@@ -1,0 +1,21 @@
+linters:
+  enable:
+    - errcheck
+    - gosimple
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+    - gofmt
+    - goimports
+    - misspell
+    - prealloc
+
+linters-settings:
+  misspell:
+    locale: US
+  goimports:
+    local-prefixes: github.com/varushsu/slicesx
+
+issues:
+  exclude-use-default: false
