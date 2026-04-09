@@ -20,6 +20,7 @@
 package slicesx
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 )
@@ -117,8 +118,8 @@ func TestChunk(t *testing.T) {
 func TestChunkPanicCases(t *testing.T) {
 	t.Run("LastStepZero", func(t *testing.T) {
 		defer func() {
-			if v := recover(); v != "last step must be a positive" {
-				t.Errorf("Expected panic 'last step must be a positive', got %v", v)
+			if v := recover(); v != "last step must be positive" {
+				t.Errorf("Expected panic 'last step must be positive', got %v", v)
 			}
 		}()
 		Chunk([]int{1}, 0)
@@ -126,8 +127,8 @@ func TestChunkPanicCases(t *testing.T) {
 
 	t.Run("LastStepNegative", func(t *testing.T) {
 		defer func() {
-			if v := recover(); v != "last step must be a positive" {
-				t.Errorf("Expected panic 'last step must be a positive', got %v", v)
+			if v := recover(); v != "last step must be positive" {
+				t.Errorf("Expected panic 'last step must be positive', got %v", v)
 			}
 		}()
 		Chunk([]int{1}, -1)
@@ -135,8 +136,8 @@ func TestChunkPanicCases(t *testing.T) {
 
 	t.Run("NegativeStepInMiddle", func(t *testing.T) {
 		defer func() {
-			if v := recover(); v != "step should not be a negative" {
-				t.Errorf("Expected panic 'step should not be a negative', got %v", v)
+			if v := recover(); v != "step must not be negative" {
+				t.Errorf("Expected panic 'step must not be negative', got %v", v)
 			}
 		}()
 		Chunk([]int{1, 2, 3, 4, 5}, 1, 0, -1, 1)
@@ -146,16 +147,16 @@ func TestChunkPanicCases(t *testing.T) {
 func TestChunkZeroLen(t *testing.T) {
 	t.Run("ZeroLen1", func(t *testing.T) {
 		var array []int
-		excepted := make([][]int, 0)
-		if !reflect.DeepEqual(Chunk(array, 1), excepted) {
+		expected := make([][]int, 0)
+		if !reflect.DeepEqual(Chunk(array, 1), expected) {
 			t.Errorf("ZeroLen1 failed")
 		}
 	})
 
 	t.Run("ZeroLen2", func(t *testing.T) {
 		var array = make([]int, 0)
-		excepted := make([][]int, 0)
-		if !reflect.DeepEqual(Chunk(array, 1), excepted) {
+		expected := make([][]int, 0)
+		if !reflect.DeepEqual(Chunk(array, 1), expected) {
 			t.Errorf("ZeroLen2 failed")
 		}
 	})
@@ -230,4 +231,50 @@ func genArray(start, end int) []int {
 		array = append(array, i)
 	}
 	return array
+}
+
+func BenchmarkChunk(b *testing.B) {
+	array := genArray(0, 10000)
+
+	b.Run("SingleStep", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			Chunk(array, 100)
+		}
+	})
+
+	b.Run("MultipleSteps", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			Chunk(array, 1, 2, 3, 4, 5, 100)
+		}
+	})
+
+	b.Run("SmallStep", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			Chunk(array, 1)
+		}
+	})
+
+	b.Run("LargeStep", func(b *testing.B) {
+		for i := 0; i < b.N; i++ {
+			Chunk(array, 10000)
+		}
+	})
+}
+
+func ExampleChunk() {
+	array := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+
+	// Single step size
+	fmt.Println(Chunk(array, 3))
+
+	// Multiple step sizes (last step is reused)
+	fmt.Println(Chunk(array, 1, 2, 3))
+
+	// Step with zero (produces empty chunk)
+	fmt.Println(Chunk(array, 1, 0, 3))
+
+	// Output:
+	// [[1 2 3] [4 5 6] [7 8 9] [10]]
+	// [[1] [2 3] [4 5 6] [7 8 9] [10]]
+	// [[1] [] [2 3 4] [5 6 7] [8 9 10]]
 }

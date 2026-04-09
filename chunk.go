@@ -38,10 +38,10 @@ package slicesx
 //	// chunks: [[1], [], [2, 3, 4], [5, 6, 7], [8, 9, 10]]
 //
 //	chunks = Chunk(array, 1, -1, 3)
-//	// panic("step should not be a negative")
+//	// panic("step must not be negative")
 //
 //	chunks = Chunk(array, 1, 3, 0)
-//	// panic("last step must be a positive")
+//	// panic("last step must be positive")
 func Chunk[S ~[]E, E any, N number](array S, step ...N) []S {
 
 	if len(step) == 0 { // actually unreachable
@@ -49,7 +49,7 @@ func Chunk[S ~[]E, E any, N number](array S, step ...N) []S {
 	}
 
 	if step[len(step)-1] <= 0 {
-		panic("last step must be a positive")
+		panic("last step must be positive")
 	}
 
 	var stepIndex = 0
@@ -74,7 +74,7 @@ func Chunk[S ~[]E, E any, N number](array S, step ...N) []S {
 
 	for i := range step {
 		if step[i] < 0 {
-			panic("step should not be a negative")
+			panic("step must not be negative")
 		}
 
 		if remainingLen <= 0 {
@@ -100,7 +100,7 @@ func Chunk[S ~[]E, E any, N number](array S, step ...N) []S {
 	for {
 		ns = nextStep()
 		if ns < 0 {
-			panic("step should not be a negative")
+			panic("step must not be negative")
 		}
 		end += ns
 
